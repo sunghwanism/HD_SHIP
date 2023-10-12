@@ -3,3 +3,4 @@ __pycache__
 logs.log
 data_info.xlsx
 origindata.zip
+*.pth
