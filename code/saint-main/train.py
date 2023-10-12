@@ -33,7 +33,7 @@ def train():
     parser.add_argument('--optimizer', default='AdamW', type=str,choices = ['AdamW','Adam','SGD'])
     parser.add_argument('--scheduler', default='cosine', type=str,choices = ['cosine','linear'])
 
-    parser.add_argument('--lr', default=0.0001, type=float)
+    parser.add_argument('--lr', default=0.01, type=float)
     parser.add_argument('--epochs', default=100, type=int)
     parser.add_argument('--batchsize', default=256, type=int)
     parser.add_argument('--savemodelroot', default='./bestmodels', type=str)
@@ -62,6 +62,8 @@ def train():
     parser.add_argument('--lam3', default=10, type=float)
     parser.add_argument('--final_mlp_style', default='sep', type=str,choices = ['common','sep'])
 
+    parser.add_argument('--device', default=0, type=float)
+
 
     opt = parser.parse_args()
     modelsave_path = os.path.join(os.getcwd(), opt.savemodelroot, opt.run_name)
@@ -70,7 +72,7 @@ def train():
     else:
         opt.dtask = 'clf'
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{opt.device}" if torch.cuda.is_available() else "cpu")
     print(f"Device is {device}.")
 
     torch.manual_seed(opt.set_seed)
@@ -230,8 +232,10 @@ def train():
                 loss = criterion(y_outs,y_gts.squeeze()) 
             loss.backward()
             optimizer.step()
+
             if opt.optimizer == 'SGD':
                 scheduler.step()
+
             running_loss += loss.item()
 
         print(f"Epoch {epoch} Running Loss: MSE {round(running_loss, 3)}")
