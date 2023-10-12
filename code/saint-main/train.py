@@ -72,7 +72,7 @@ def train():
     else:
         opt.dtask = 'clf'
 
-    device = torch.device(f"cuda:{opt.device}" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{int(opt.device)}" if torch.cuda.is_available() else "cpu")
     print(f"Device is {device}.")
 
     torch.manual_seed(opt.set_seed)
