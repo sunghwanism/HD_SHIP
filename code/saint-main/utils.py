@@ -145,6 +145,12 @@ def preprocessing(train, test):
     train.drop(columns='ID', inplace=True)
     test.drop(columns='ID', inplace=True)
 
+    train.drop(columns='day', inplace=True)
+    test.drop(columns='day', inplace=True)
+
+    train.drop(columns='minute', inplace=True)
+    test.drop(columns='minute', inplace=True)
+
     # Categorical 컬럼 인코딩
     categorical_features = ['ARI_CO', 'ARI_PO', 'SHIP_TYPE_CATEGORY', 'SHIPMANAGER', 'FLAG']
     encoders = {}
