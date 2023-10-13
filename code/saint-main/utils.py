@@ -142,8 +142,8 @@ def preprocessing(train, test):
     # datetime 컬럼 제거
     train.drop(columns='ATA', inplace=True)
     test.drop(columns='ATA', inplace=True)
-    train.drop(columns='ID', inplace=True)
-    test.drop(columns='ID', inplace=True)
+    # train.drop(columns='ID', inplace=True)
+    # test.drop(columns='ID', inplace=True)
 
     train.drop(columns='day', inplace=True)
     test.drop(columns='day', inplace=True)
@@ -152,7 +152,7 @@ def preprocessing(train, test):
     test.drop(columns='minute', inplace=True)
 
     # Categorical 컬럼 인코딩
-    categorical_features = ['ARI_CO', 'ARI_PO', 'SHIP_TYPE_CATEGORY', 'SHIPMANAGER', 'FLAG']
+    categorical_features = ['ARI_CO', 'ARI_PO', 'SHIP_TYPE_CATEGORY', "ID",'SHIPMANAGER', 'FLAG']
     encoders = {}
 
     for feature in tqdm(categorical_features, desc="Encoding features"):
