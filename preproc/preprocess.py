@@ -78,7 +78,7 @@ def BN_preprocessing(train, test, BN_split=True):
     """
 
     # Processing for Null values
-    for df in [train, test]:
+    for i, df in enumerate([train, test]):
         
         NaN_count = 0
         one_interpolate = 0
@@ -88,21 +88,31 @@ def BN_preprocessing(train, test, BN_split=True):
         
         for i in tqdm(bn_null_idx):
             CO, PO, _, month = bn_null_df.iloc[i]
-            same_df_1 = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["BN"].notna())]
-            same_df_2 = test.loc[(test["ARI_CO"]==CO)&(test["ARI_PO"]==PO)&(test["month"]==month)&(test["BN"].notna())]
+            same_df = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["BN"].notna())]
             
-            if (len(same_df_1)+len(same_df_2)) == 0:
-                interpolate = np.nan()
+            if len(same_df) == 0:
+                if i == 0:
+                    interpolate = np.nan()
+                else:
+                    interpolate_bn = train["BN"].mean()
+                    interpolate_u = train["U_WIND"].mean()
+                    interpolate_v = train["V_WIND"].mean()
                 NaN_count += 1
                 
-            elif (len(same_df_1)+len(same_df_2)) == 1:
-                interpolate = same_df_1["BN"].mean() + same_df_2["BN"].mean()
+            elif len(same_df) == 1:
+                interpolate_bn = same_df["BN"].mean()
+                interpolate_u = same_df["U_WIND"].mean()
+                interpolate_v = same_df["V_WIND"].mean()
                 one_interpolate += 1
                 
             else:
-                interpolate = interpolate = same_df_1["BN"].mean() + same_df_2["BN"].mean()
+                interpolate_bn = same_df["BN"].mean()
+                interpolate_u = same_df["U_WIND"].mean()
+                interpolate_v = same_df["V_WIND"].mean()
                 
-            df.iloc[i, np.where(train.columns == "BN")[0]] = interpolate
+            df.iloc[i, np.where(train.columns == "BN")[0]] = interpolate_bn
+            df.iloc[i, np.where(train.columns == "U_WIND")[0]] = interpolate_u
+            df.iloc[i, np.where(train.columns == "V_WIND")[0]] = interpolate_v
         
         print(f"NaN data {NaN_count} // One interpolate {one_interpolate}")
     
@@ -115,7 +125,50 @@ def BN_preprocessing(train, test, BN_split=True):
     
     return train, test
     
+def temperature_preprocessing(train, test):
+    """
+    fill N/A -> 2018년 12월부터는 데이터가 존재
+    1) 도착항의 국가 및 항구명이 동일하면서
+    2) month가 동일한 데이터로 null값을 채움
+    
+    만약 2번의 조건에 모두 만족하지 않는다면, 1번 조건에 만족하는 값들의 mean값으로 null값을 대체
+    만약 1번, 2번 조건 모두 만족하지 않는다면, ....
+    """
 
+    # Processing for Null values
+    for df in [train, test]:
+        
+        NaN_count = 0
+        one_interpolate = 0
+        
+        bn_null_df = df[df["AIR_TEMPERATURE"].isna()][["ARI_CO", "ARI_PO", "AIR_TEMPERATURE", "month"]]
+        bn_null_idx = bn_null_df.index
+        
+        for i in tqdm(bn_null_idx):
+            CO, PO, _, month = bn_null_df.iloc[i]
+            same_df = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["AIR_TEMPERATURE"].notna())]
+            
+            if len(same_df) == 0:
+                if i == 0:
+                    interpolate = np.nan()
+                else:
+                    interpolate = train["AIR_TEMPERATURE"].mean()
+                NaN_count += 1
+                
+            elif len(same_df) == 1:
+                interpolate = same_df["AIR_TEMPERATURE"].mean()
+                one_interpolate += 1
+                
+            else:
+                interpolate = same_df["AIR_TEMPERATURE"].mean()
+                
+            df.iloc[i, np.where(train.columns == "AIR_TEMPERATURE")[0]] = interpolate
+        
+        print(f"NaN data {NaN_count} // One interpolate {one_interpolate}")
+    
+    train.dropna(axis=0, subset=["AIR_TEMPERATURE"])
+    
+    return train, test
 
 def preprocessing(orgin_train, origin_test,
                   day_split=True, weekday_split=True, covid_year=True, # About Time
@@ -134,6 +187,11 @@ def preprocessing(orgin_train, origin_test,
     print("Category feature after BN Preprocessor", CATEGORY_COL)
     print("------------------------------------------------")
     
+    
+    print("[Temperture Preprocessor]")
+    train, test = temperature_preprocessing(train, test)
+    print("Category feature after Temperture Preprocessor", CATEGORY_COL)
+    print("------------------------------------------------")
     
     return train, test
     
