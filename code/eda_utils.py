@@ -41,3 +41,23 @@ def avgOftime(df, col, LABEL="CI_HOUR", viz=False):
         plt.bar(col_info, avg_info.values)
         plt.xticks(col_info, rotation=90)
         plt.show()
+    
+def round_fn(number):
+    return round(number, 1)
+        
+def info_per_col(df, categoric_features):
+    
+    columns = df.columns
+    
+    for col in columns:
+        if col not in categoric_features and col not in ["ATA"]:
+            print(col, "information")
+            print("Min:", round_fn(df[col].min()),
+                  "Max:", round_fn(df[col].max()),
+                  "Mean", round_fn(df[col].mean()))
+            plt.figure(figsize=(10,5))
+            sns.boxplot(data=df[col])
+            plt.title(f"{col} Feature")
+            plt.show()
+            
+    

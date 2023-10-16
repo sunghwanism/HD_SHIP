@@ -47,8 +47,9 @@ def preprocessing(train, test):
         encoders[feature] = le
 
     # 결측치 처리
-    train.fillna(train.mean(), inplace=True)
-    test.fillna(train.mean(), inplace=True)
+    # train.fillna(train.mean(), inplace=True)
+    # test.fillna(train.mean(), inplace=True)
+    # train.dropna(axis=0, inplace=True)
     
     return train, test, categorical_features
 
