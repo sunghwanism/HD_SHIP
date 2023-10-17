@@ -125,7 +125,7 @@ def BN_preprocessing(train, test, BN_split=True):
         test["BN"] = test["BN"].round(0)
         CATEGORY_COL.append("BN")
     
-    train.dropna(axis=0, subset=["BN"])
+    # train.dropna(axis=0, subset=["BN"])
     
     return train, test
     
@@ -173,7 +173,7 @@ def temperature_preprocessing(train, test):
         
         print(f"NaN data {NaN_count} // One interpolate {one_interpolate}")
     
-    train.dropna(axis=0, subset=["AIR_TEMPERATURE"])
+    # train.dropna(axis=0, subset=["AIR_TEMPERATURE"])
     
     return train, test
 
@@ -182,7 +182,6 @@ def size_preprocessing(train, test):
     
     pass
     
-
 
 
 def preprocessing(orgin_train, origin_test,
