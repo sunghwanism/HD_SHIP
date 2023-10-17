@@ -87,9 +87,9 @@ def BN_preprocessing(train, test, BN_split=True):
         bn_null_idx = bn_null_df.index
         
         for i in tqdm(bn_null_idx):
-            CO, PO, month = (np.where(train.columns=="ARI_CO")[0][0],
-                             np.where(train.columns=="ARI_PO")[0][0],
-                             np.where(train.columns=="month")[0][0])
+            CO = df.iloc[i]["ARI_CO"]
+            PO = df.iloc[i]["ARI_PO"]
+            month = df.iloc[i]["month"]
             
             same_df = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["BN"].notna())]
             
@@ -149,9 +149,9 @@ def temperature_preprocessing(train, test):
         bn_null_idx = bn_null_df.index
         
         for i in tqdm(bn_null_idx):
-            CO, PO, month = (np.where(train.columns=="ARI_CO")[0][0],
-                             np.where(train.columns=="ARI_PO")[0][0],
-                             np.where(train.columns=="month")[0][0])
+            CO = df.iloc[i]["ARI_CO"]
+            PO = df.iloc[i]["ARI_PO"]
+            month = df.iloc[i]["month"]
             
             same_df = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["AIR_TEMPERATURE"].notna())]
             
@@ -202,10 +202,10 @@ def preprocessing(orgin_train, origin_test,
     print("------------------------------------------------")
     
     
-    print("[Temperture Preprocessor]")
-    train, test = temperature_preprocessing(train, test)
-    print("Category feature after Temperture Preprocessor", CATEGORY_COL)
-    print("------------------------------------------------")
+    # print("[Temperture Preprocessor]")
+    # train, test = temperature_preprocessing(train, test)
+    # print("Category feature after Temperture Preprocessor", CATEGORY_COL)
+    # print("------------------------------------------------")
     
     return train, test
     
