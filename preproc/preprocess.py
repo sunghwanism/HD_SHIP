@@ -87,13 +87,17 @@ def BN_preprocessing(train, test, BN_split=True):
         bn_null_idx = bn_null_df.index
         
         for i in tqdm(bn_null_idx):
-            CO, PO, _, month = bn_null_df.iloc[i]
+            CO, PO, month = (np.where(train.columns=="ARI_CO")[0][0],
+                             np.where(train.columns=="ARI_PO")[0][0],
+                             np.where(train.columns=="month")[0][0])
+            
             same_df = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["BN"].notna())]
             
             if len(same_df) == 0:
-                if i == 0:
-                    interpolate = np.nan()
-                else:
+                if i == 0: # if train
+                    interpolate_bn = np.nan()
+                    
+                else: # if test dataset, we use all mean value on each feature
                     interpolate_bn = train["BN"].mean()
                     interpolate_u = train["U_WIND"].mean()
                     interpolate_v = train["V_WIND"].mean()
@@ -145,7 +149,10 @@ def temperature_preprocessing(train, test):
         bn_null_idx = bn_null_df.index
         
         for i in tqdm(bn_null_idx):
-            CO, PO, _, month = bn_null_df.iloc[i]
+            CO, PO, month = (np.where(train.columns=="ARI_CO")[0][0],
+                             np.where(train.columns=="ARI_PO")[0][0],
+                             np.where(train.columns=="month")[0][0])
+            
             same_df = train.loc[(train["ARI_CO"]==CO)&(train["ARI_PO"]==PO)&(train["month"]==month)&(train["AIR_TEMPERATURE"].notna())]
             
             if len(same_df) == 0:
@@ -169,6 +176,14 @@ def temperature_preprocessing(train, test):
     train.dropna(axis=0, subset=["AIR_TEMPERATURE"])
     
     return train, test
+
+
+def size_preprocessing(train, test):
+    
+    pass
+    
+
+
 
 def preprocessing(orgin_train, origin_test,
                   day_split=True, weekday_split=True, covid_year=True, # About Time
