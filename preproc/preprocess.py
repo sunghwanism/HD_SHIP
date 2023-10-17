@@ -188,24 +188,32 @@ def preprocessing(orgin_train, origin_test,
                   day_split=True, weekday_split=True, covid_year=True, # About Time
                   BN_cleaning=True, # make BN as categorical feature
                   ):
+    """
+    [preprocessing 결과]
+    (Train) fill NA 불가 9개 - drop 처리
+    (test) fiil NA 불가 3개 - Average 처리
+
+    !!! Time, BN, Temperture은 시간관계 상 먼저 처리 진행함 !!!
+
+    """
+    # ==========================================================================================
+    # print("[Time Transformer]")
+    # train, test = timeTransformer(orgin_train, origin_test,
+    #                               day_split=day_split, weekday_split=weekday_split, 
+    #                               covid_year=covid_year)
+    # print("Category feature after Time Transformer", CATEGORY_COL)
+    # print("------------------------------------------------")
     
-    print("[Time Transformer]")
-    train, test = timeTransformer(orgin_train, origin_test,
-                                  day_split=day_split, weekday_split=weekday_split, 
-                                  covid_year=covid_year)
-    print("Category feature after Time Transformer", CATEGORY_COL)
-    print("------------------------------------------------")
-    
-    print("[BN Preprocessor]")
-    train, test = BN_preprocessing(train, test, BN_split=BN_cleaning)
-    print("Category feature after BN Preprocessor", CATEGORY_COL)
-    print("------------------------------------------------")
-    
+    # print("[BN Preprocessor]")
+    # train, test = BN_preprocessing(train, test, BN_split=BN_cleaning)
+    # print("Category feature after BN Preprocessor", CATEGORY_COL)
+    # print("------------------------------------------------")
     
     # print("[Temperture Preprocessor]")
     # train, test = temperature_preprocessing(train, test)
     # print("Category feature after Temperture Preprocessor", CATEGORY_COL)
     # print("------------------------------------------------")
+    # ==========================================================================================
     
     return train, test
     
